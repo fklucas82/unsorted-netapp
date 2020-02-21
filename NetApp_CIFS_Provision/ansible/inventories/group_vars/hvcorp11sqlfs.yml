@@ -1,0 +1,48 @@
+---
+#------ User Defined Variables --------------------------------------------------------------------------------------------------------------------#
+#vserver name, will be accessed using \\vserver
+vserver: "hvcorp11sqlfs"
+#VLAN ID (3540 for Hy-Vee|ServiceIsland|FileServers EPG)
+vlan: 3540
+#IP Configuration (Hy-Vee|ServiceIsland|FileServers EPG mask is 255.255.255.224, gw is 10.134.9.33)
+address: 10.134.9.51
+netmask: 255.255.255.224
+gateway: 10.134.9.33
+#PTR record information
+#For now we'll need to look up the zone and enter the relevent information
+ptr_zone: 134.10.in-addr.arpa               #zone referenced from Reverse DNS zones
+#In this case since the reverse lookup zone is two octets, the last two IP octets are here in reverse order.
+#-- 
+#volumes to be created (can be expanded)
+#Default volume will be shares0.  Ideally user shares are subfolders of shares0.
+#Additional volumes should only be created if encryption or snapshot policies need to differ.
+#-- 
+vars_vol:
+    - { vol_name: 'shares0', size: '1', unit: 'tb' }
+#Shares and junction paths.  
+#The top level hidden share should be shares0$, accessed using \\vserver\shares0$
+#Additional shares should be subfolders in shares0$, accessed using \\vserver\shares0$\folder and \\vserver\folder
+#This playbook currently supports creating shares one level deep, but may expand in the future.    
+vars_share:
+    - { share_name: 'shares0$', path: '/shares0'}
+    - { share_name: 'prod', path: '/shares0/prod'}
+    - { share_name: 'dev', path: '/shares0/dev'}
+    - { share_name: 'qa', path: '/shares0/qa'}
+#--    
+#A list of users or groups with permissions and shares
+#Options for permisssions are:
+#FC for full control #RW for modify #RE for read and execute #RO for read only
+#userorgroup should match what is shown in 'pre-Windows 2000 User logon name' in AD
+#or sAMAccountName in the AD Object Attributes
+vars_members:
+    - { userorgroup: 'SQL_HVCORP11_SQLServ', permission: FC, share_name: 'prod'}
+    - { userorgroup: 'SQL_HVCORP11_SQLServ', permission: FC, share_name: 'dev'}
+    - { userorgroup: 'SQL_HVCORP11_SQLServ', permission: FC, share_name: 'qa'}
+    - { userorgroup: 'SQL_HVCORP11_AGENT', permission: FC, share_name: 'qa'}
+    - { userorgroup: 'SQL_HVCORP11_AGENT', permission: FC, share_name: 'dev'}
+    - { userorgroup: 'SQL_HVCORP11_AGENT', permission: FC, share_name: 'prod'}
+    - { userorgroup: 'SQL_HVCORP11_SSIS', permission: FC, share_name: 'prod'}
+    - { userorgroup: 'SQL_HVCORP11_SSIS', permission: FC, share_name: 'dev'}
+    - { userorgroup: 'SQL_HVCORP11_SSIS', permission: FC, share_name: 'qa'}
+    - { userorgroup: 'IT POS Systems Sec Group', permission: RW, share_name: 'prod'}
+    - { userorgroup: 'IT DBA Sec Group', permission: RW, share_name: 'shares0$'}

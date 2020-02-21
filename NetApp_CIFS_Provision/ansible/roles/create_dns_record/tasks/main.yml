@@ -1,0 +1,2 @@
+- name: Create DNS Record
+  import_tasks: create_dns_record.yml

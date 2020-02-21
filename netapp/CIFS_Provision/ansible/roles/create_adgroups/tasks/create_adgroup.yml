@@ -1,0 +1,70 @@
+- name: Create Full Control Group
+  win_domain_group:
+    name: "{{ vserver }}_{{ item.share_name }}_FC"
+    scope: domainlocal
+    category: security
+    description: "Grants Full Control to \\\\{{ vserver }}\\{{ item.share_name }}"
+    path: "{{ SVM_OU }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create Modify Group
+  win_domain_group:
+    name: "{{ vserver }}_{{ item.share_name }}_RW"
+    scope: domainlocal
+    category: security
+    description: "Grants Modify to \\\\{{ vserver }}\\{{ item.share_name }}"
+    path: "{{ SVM_OU }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create Read Only Group
+  win_domain_group:
+    name: "{{ vserver }}_{{ item.share_name }}_RO"
+    scope: domainlocal
+    category: security
+    description: "Grants Read Only to \\\\{{ vserver }}\\{{ item.share_name }}"
+    path: "{{ SVM_OU }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create Read and Execute Group
+  win_domain_group:
+    name: "{{ vserver }}_{{ item.share_name }}_RE"
+    scope: domainlocal
+    category: security
+    description: "Grants Read and Execute to \\\\{{ vserver }}\\{{ item.share_name }}"
+    path: "{{ SVM_OU }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Add baseline membership to FC group
+  win_domain_group_membership:
+    name: "{{ vserver }}_{{ item.share_name }}_FC"
+    members:
+      - FSAdmin
+      - StorageAdmins
+    state: present
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- pause:
+    minutes: 2
+
+  
+

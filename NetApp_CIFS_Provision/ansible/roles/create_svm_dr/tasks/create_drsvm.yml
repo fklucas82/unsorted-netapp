@@ -1,0 +1,11 @@
+  - name: Create DR Destination SVM
+    na_ontap_svm:
+      state: present
+      name: "{{ dr_vserver }}"
+      subtype: dp_destination
+      hostname: "{{ dest_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

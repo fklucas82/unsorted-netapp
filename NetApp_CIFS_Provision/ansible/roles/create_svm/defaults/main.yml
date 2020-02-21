@@ -1,0 +1,2 @@
+root_volume_security_style: ntfs
+allowed_protocols: cifs

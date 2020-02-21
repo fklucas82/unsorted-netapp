@@ -1,0 +1,2 @@
+- name: Create Snapmirror 
+  import_tasks: create_snapmirror.yml

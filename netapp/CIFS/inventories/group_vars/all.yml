@@ -1,0 +1,34 @@
+---
+#login info - replace with ansible_user / vault - needs to be domain user with OU and netapp permissions
+hostname: wdmnetapp01.hy-vee.net
+username: admin
+password: tatct0ap!
+dest_hostname: chasnetapp01.hy-vee.net
+#vserver names
+vserver: "ansible_test"
+dr_vserver: "{{ vserver }}_repl"
+#root volume is derived from vserver name
+#can't contain hyphens, replacing with underscores
+rootvol: "{{ vserver | replace('-', '_')}}_root"
+#CIFS volumes should reside on aggr2_01, WDMNetApp01_02
+root_volume_aggregate: aggr2_01
+home_node: WDMNetApp01_02
+#VLAN ID (3540 for Hy-Vee|ServiceIsland|FileServers EPG)
+vlan: 3540
+port_group: a0a
+home_port: "{{ port_group }}-{{ vlan }}"
+#IP Configuration
+address: 10.134.9.49
+netmask: 255.255.255.224
+gateway: 10.134.26.33
+nameservers: 10.134.10.53,10.134.10.54
+#Domain Info
+#Servers OU
+#volumes to be created (can be expanded)
+vars_vol:
+    - { vol_name: 'shares0', size: '100', unit: 'gb' }
+#shares
+#FileShares OU
+#AD Permissions Security Groups
+
+

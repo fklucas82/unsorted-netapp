@@ -1,0 +1,2 @@
+- name: Create DR SVM
+  import_tasks: create_drsvm.yml

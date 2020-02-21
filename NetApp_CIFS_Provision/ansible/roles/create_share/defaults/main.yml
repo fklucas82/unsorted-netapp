@@ -1,0 +1,4 @@
+windows_bridge_server: "pwwdmansbridge1"
+ansible_become_user: "HY-VEE\\{{ ansible_service_account }}"
+ansible_become_pass: "{{ ansible_password }}"
+ansible_winrm_kerberos_delegation: true

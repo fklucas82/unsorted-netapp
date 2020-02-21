@@ -1,0 +1,14 @@
+  - name: Create SVM Peer Relationship
+    na_ontap_vserver_peer:
+      state: present
+      peer_vserver: "{{ dr_vserver }}"
+      peer_cluster: CHASNetapp01
+      vserver: "{{ vserver }}"
+      applications: snapmirror
+      dest_hostname: "{{ dest_hostname }}"
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

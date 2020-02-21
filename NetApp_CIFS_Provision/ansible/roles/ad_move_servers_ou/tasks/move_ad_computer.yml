@@ -1,0 +1,12 @@
+- name: Move computer object to servers OU
+  win_domain_computer:
+    name: "{{ vserver }}"
+    dns_hostname: "{{ vserver }}.{{ dns_domain }}"
+    sam_account_name: "{{ vserver }}$"
+    ou: "{{ servers_ou }}"
+    state: present
+    enabled: yes
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only

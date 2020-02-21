@@ -1,0 +1,2 @@
+- name: Peer source and destination SVMs
+  import_tasks: peer_srcsvm_destsvm.yml

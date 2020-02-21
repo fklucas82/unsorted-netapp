@@ -1,0 +1,54 @@
+---
+#------ NetApp Default Variables --------------------------------------------------------------------------------------------------------------------#
+#NetApp Cluster hostnames
+hostname: wdmnetapp01.hy-vee.net
+dest_hostname: chasnetapp01.hy-vee.net
+#Default port group on NetApp
+port_group: a0a
+#ports and vlans in netapp are represented by the port name - vlan - for example a0a-3501
+home_port: "{{ port_group }}-{{ vlan }}"
+#CIFS volumes should reside on aggr2_01, WDMNetApp01_02
+root_volume_aggregate: aggr2_01
+home_node: WDMNetApp01_02
+#root volume is derived from vserver name
+#can't contain hyphens, replacing with underscores
+rootvol: "{{ vserver | replace('-', '_')}}_root"
+#replication target SVM
+dr_vserver: "{{ vserver }}_repl"
+#DNS Configuration
+dns_domain: "hy-vee.net"
+nameservers: 10.134.10.53,10.134.10.54
+ptr_data: "{{ vserver}}.{{ dns_domain }}."   #PTR hostname
+#------ Windows and Active Directory Default Variables --------------------------------------------------------------------------------------------------------------------#
+#We'll use this OU for organizing and configuring file share permissions
+FileShareOU: "OU=File Shares,OU=Security Groups,OU=Corporate,OU=HyVee,DC=Hy-Vee,DC=net"
+#This OU is subordiante to the File Shares OU specific to the fileserver
+SVM_OU: "OU={{ vserver }},{{ FileShareOU }}"
+#Default domain controller to use to create computer objects, users, groups, OUs
+hyvee_domain_controller: "hvacidc1"
+temp_dir: "C:\\Temp"
+ansible_service_account: Ansible_Systems_Svc
+#------ Ansible connection info --------------------------------------------------------------------------------------------------------------------#
+ansible_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          35623637333231326266363238336336366430393934643037306139313130626563373632303830
+          3234373831333461636163346237316461363431623039640a343232313565346639306138343333
+          61333736353438663436646262663932303637316335373938326663333763326633643232383364
+          3864363464353538660a616165383664643636653130306665373163353336333365323436653261
+          3034
+domain_join_user: sccm_adjoin             # User that will be used to join server to domain
+domain_join_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39663661656665613532306364366331376137303134656336643166363836333066626532323562
+          6364663135656666653235636265346135303461353639660a663231623265306536353964623434
+          62626134326535353637326433623631633830623531616163613263333465636363353538333032
+          3933623464646664660a653834623065373338663466363032336565343337383934316238653864
+          3061
+username: admin
+password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          62663163643430316537383039373530626235653063643531613562353633323439383366303737
+          3861623065333134636466663336356561373036376137330a333739396562383033356361393139
+          61346237636565666233373430376462613531653064313339326530376535316261353761313231
+          6361316238373638610a303834353930613466313565353662666463373437326164303732396438
+          3530

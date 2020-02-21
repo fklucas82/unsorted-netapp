@@ -1,0 +1,2 @@
+- name: Add AD Groups to Share
+  import_tasks: set_acls.yml

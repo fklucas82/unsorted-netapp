@@ -1,0 +1,24 @@
+- name: Make sure C:\Temp exists
+  win_file:
+    path: "{{ temp_dir }}"
+    state: directory
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Copy NewOU.ps1 to C:\Temp
+  win_copy:
+    src: NewOUv2.ps1
+    dest: "{{ temp_dir }}\\NewOUv2.ps1"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create OU for File Share Permissions Groups
+  win_shell: "{{ temp_dir }}\\NewOUv2.ps1 -Server {{ vserver }} -OUPath '{{ FileShareOU }}' -username HY-VEE\\{{ ansible_service_account }} -password {{ ansible_password }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only

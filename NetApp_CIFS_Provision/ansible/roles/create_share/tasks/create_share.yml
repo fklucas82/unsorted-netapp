@@ -1,0 +1,44 @@
+- debug: 
+    msg: "\\\\{{ vserver }}\\shares0$\\{{ item.path.split('/')[2]}}"
+  with_items: "{{ vars_share }}"
+  when: item.path.split('/')|length>2
+- name: Create Top Level CIFS share
+  na_ontap_cifs:
+    state: present
+    share_name: "{{ item.share_name }}"
+    path: "{{ item.path }}"
+    vserver: "{{ vserver }}"
+    share_properties: browsable,oplocks,show_previous_versions,showsnapshot
+    hostname: "{{ hostname }}"
+    username: "HY-VEE\\{{ ansible_service_account }}"
+    password: "{{ ansible_password }}"
+    https: true
+    validate_certs: false
+  delegate_to: localhost
+  with_items: "{{ vars_share }}"
+  when: item.path.split('/')|length==2
+- name: Create Folder if Subfolder of Top Level
+  win_file:
+    path: "\\\\{{ vserver }}\\shares0$\\{{ item.path.split('/')[2]}}"
+    state: directory
+  when: item.path.split('/')|length>2
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+  with_items: "{{ vars_share }}"
+- name: Create Subfolder CIFS share
+  na_ontap_cifs:
+    state: present
+    share_name: "{{ item.share_name }}"
+    path: "{{ item.path }}"
+    vserver: "{{ vserver }}"
+    share_properties: browsable,oplocks,show_previous_versions,showsnapshot
+    hostname: "{{ hostname }}"
+    username: "HY-VEE\\{{ ansible_service_account }}"
+    password: "{{ ansible_password }}"
+    https: true
+    validate_certs: false
+  delegate_to: localhost
+  with_items: "{{ vars_share }}"
+  when: item.path.split('/')|length>2

@@ -1,0 +1,4 @@
+servers_ou: "OU=Servers,OU=Corporate,OU=HyVee,DC=Hy-Vee,DC=net"
+windows_bridge_server: "pwwdmansbridge1"
+ansible_become_user: "{{ domain_join_user }}"
+ansible_become_pass: "{{ domain_join_password }}"

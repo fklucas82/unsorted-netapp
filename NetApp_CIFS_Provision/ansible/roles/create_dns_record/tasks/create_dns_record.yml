@@ -1,0 +1,38 @@
+- name: Create A Record for SVM
+  win_dns_record:
+    name: "{{ vserver }}"
+    type: "A"
+    value: "{{ address }}"
+    zone: "{{ dns_domain }}"
+    computer_name: "{{ hyvee_domain_controller }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create PTR Record for SVM
+  when: ptr_zone.split('.') | length == 4
+  win_dns_record:
+    name: "{{ address.split('.')[3] }}.{{ address.split('.')[2] }}"
+    type: "PTR"
+    value: "{{ ptr_data }}"
+    zone: "{{ ptr_zone }}"
+    computer_name: "{{ hyvee_domain_controller }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Create PTR Record for SVM
+  when: ptr_zone.split('.') | length == 5
+  win_dns_record:
+    name: "{{ address.split('.')[3] }}"
+    type: "PTR"
+    value: "{{ ptr_data }}"
+    zone: "{{ ptr_zone }}"
+    computer_name: "{{ hyvee_domain_controller }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only

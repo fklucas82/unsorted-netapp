@@ -1,0 +1,6 @@
+windows_bridge_server: "pwwdmansbridge1"
+ansible_become_user: "{{ ansible_service_account }}"
+ansible_become_pass: "{{ ansible_password }}"
+#------ Artifactory --------------------------------------------------------------------------------------------------------------------------------#
+artifactory_url: "https://artifactory.hy-vee.com/artifactory"
+artifactory_repo: "private-windows-isos"

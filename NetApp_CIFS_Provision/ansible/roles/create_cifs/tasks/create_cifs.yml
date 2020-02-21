@@ -1,0 +1,14 @@
+  - name: Create cifs_server
+    na_ontap_cifs_server:
+      state: present
+      vserver: "{{ vserver }}"
+      cifs_server_name: "{{ vserver }}"
+      domain: "{{ dns_domain }}"
+      hostname: "{{ hostname }}"
+      username: "HY-VEE\\{{ ansible_service_account }}"
+      password: "{{ ansible_password }}"
+      admin_user_name: "{{ ansible_service_account }}"
+      admin_password: "{{ ansible_password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

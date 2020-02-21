@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Setup') {
+            steps {
+                sh './do/setup'
+            }
+        }
+        stage('Test') {
+            when {
+                expression { env.ACTION == 'test'}
+            }
+            steps {
+                sh '''
+                . ./.venv/bin/activate
+                ./do/test
+                '''
+            }
+        }
+        stage('Deploy') {
+            when {
+                expression { env.ACTION == 'deploy' }
+            }
+            steps {
+                sh '''
+                . ./.venv/bin/activate
+                ./do/deploy
+                '''
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                sh './do/cleanup'
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
+}

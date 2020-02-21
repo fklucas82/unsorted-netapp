@@ -1,0 +1,16 @@
+#!/bin/bash
+set +x
+
+echo "Executing tests..."
+
+echo "-----------------------------------------"
+echo "Executing 'terraform plan'..."
+
+echo "Linting Ansible playbook..."
+ansible-lint ansible/site.yml --exclude=./ansible/roles/external_roles/
+
+echo "Performing Ansible dry-run..."
+ansible-playbook ansible/site.yml --check
+
+echo "-----------------------------------------"
+echo "Finished executing tests"

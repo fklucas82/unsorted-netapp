@@ -1,0 +1,21 @@
+  - name: Create interface
+    na_ontap_interface:
+      state: present
+      interface_name: "{{ vserver }}_lif0"
+      home_port: "{{ home_port }}"      
+      home_node: "{{ home_node }}"
+      role: data
+      protocols: cifs
+      admin_status: up
+      failover_policy: local-only
+      firewall_policy: mgmt
+      is_auto_revert: true
+      address: "{{ address }}"
+      netmask: "{{ netmask }}"
+      vserver: "{{ vserver }}"
+      hostname: "{{ hostname }}"
+      username: "HY-VEE\\{{ ansible_service_account }}"
+      password: "{{ ansible_password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

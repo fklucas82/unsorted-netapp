@@ -1,0 +1,13 @@
+  - name: create route
+    na_ontap_net_routes:
+      state: present
+      vserver: "{{ vserver }}"
+      destination: "{{ destination }}"
+      gateway: "{{ gateway }}"
+      metric: "{{ metric }}"
+      hostname: "{{ hostname }}"
+      username: "HY-VEE\\{{ ansible_service_account }}"
+      password: "{{ ansible_password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

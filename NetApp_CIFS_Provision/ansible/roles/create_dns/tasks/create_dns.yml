@@ -1,0 +1,13 @@
+  - name: create dns
+    na_ontap_dns:
+      state: present
+      domains: "{{ dns_domain }}"
+      nameservers: "{{ nameservers }}"
+      vserver: "{{ vserver }}"
+      hostname: "{{ hostname }}"
+      username: "HY-VEE\\{{ ansible_service_account }}"
+      password: "{{ ansible_password }}"
+      https: true
+      validate_certs: false
+      skip_validation: yes
+    delegate_to: localhost

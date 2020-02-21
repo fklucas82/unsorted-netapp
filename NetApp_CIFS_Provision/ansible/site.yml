@@ -1,0 +1,29 @@
+---
+- hosts: all
+  gather_facts: false
+  roles:
+    - role: create_svm 
+    - role: create_interface
+    - role: create_route
+    - role: create_dns
+    - role: create_dns_record
+      tags: ['dns']
+    - role: create_cifs    
+    - role: ad_move_servers_ou
+    - role: create_flexvol
+      tags: ['groups']
+    - role: create_share
+      tags: ['groups']
+    - role: create_ou
+    - role: create_adgroups
+      tags: ['groups']
+    - role: add_group_members
+      tags: ['groups']
+    - role: add_groups_to_share
+      tags: ['set_acls','groups']
+    - role: create_svm_dr
+      tags: ['dr']
+    - role: peer_srcsvm_destsvm
+      tags: ['dr']
+    - role: create_snapmirror
+      tags: ['dr']

@@ -1,0 +1,15 @@
+- name: Add members
+  win_domain_group_membership:
+    name: "{{ vserver }}_{{ item.share_name }}_{{ item.permission }}"
+    state: present
+    members: "{{ item.userorgroup }}"
+  with_items:
+   - "{{ vars_members }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_user: "{{ ansible_service_account }}"
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  
+

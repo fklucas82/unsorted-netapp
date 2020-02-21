@@ -1,0 +1,32 @@
+- name: Make sure C:\Temp exists
+  win_file:
+    path: "{{ temp_dir }}"
+    state: directory
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Copy SetACLs.ps1 to C:\Temp
+  win_copy:
+    src: SetACLs.ps1
+    dest: "{{ temp_dir }}\\SetACLs.ps1"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Add groups to file share ACL for Top Level Folder
+  when: item.path.split('/')|length==2
+  win_shell: "{{ temp_dir }}\\SetACLs.ps1 -FC '{{ vserver }}_{{ item.share_name }}_FC' -RO '{{ vserver }}_{{ item.share_name }}_RO' -RW '{{ vserver }}_{{ item.share_name }}_RW' -RE '{{ vserver }}_{{ item.share_name }}_RE' -Server {{ vserver }} -FolderPath {{ item.share_name }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- name: Add groups to file share ACL for subfolder
+  when: item.path.split('/')|length>2
+  win_shell: "{{ temp_dir }}\\SetACLs.ps1 -FC '{{ vserver }}_{{ item.share_name }}_FC' -RO '{{ vserver }}_{{ item.share_name }}_RO' -RW '{{ vserver }}_{{ item.share_name }}_RW' -RE '{{ vserver }}_{{ item.share_name }}_RE' -Server {{ vserver }} -FolderPath shares0$\\{{ item.share_name }}"
+  with_items: "{{ vars_share }}"
+  delegate_to: "{{ windows_bridge_server }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only

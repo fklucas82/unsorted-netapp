@@ -1,0 +1,14 @@
+  - name: Create SVM
+    na_ontap_svm:
+      state: present
+      name: "{{ vserver }}"
+      root_volume: "{{ rootvol }}"
+      root_volume_aggregate: "{{ root_volume_aggregate }}"
+      root_volume_security_style: "{{ root_volume_security_style }}"
+      allowed_protocols: "{{ allowed_protocols }}"
+      hostname: "{{ hostname }}"
+      username: "HY-VEE\\{{ ansible_service_account }}"
+      password: "{{ ansible_password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

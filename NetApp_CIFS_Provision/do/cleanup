@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$VIRTUAL_ENV" ]; then
+    deactivate
+fi
+
+if [ -d ".venv" ]; then
+    rm -rf .venv
+fi
+
+echo "Done"

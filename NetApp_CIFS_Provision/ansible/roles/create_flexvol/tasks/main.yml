@@ -1,0 +1,2 @@
+- name: Create Volume
+  import_tasks: create_flexvol.yml

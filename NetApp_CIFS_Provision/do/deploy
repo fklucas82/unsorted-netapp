@@ -1,0 +1,14 @@
+#!/bin/bash
+set +x
+set -e
+
+echo "Deploying to $ENVIRONMENT environment..."
+
+# Deploy with Ansible
+export ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_FORCE_COLOR=true
+export ANSIBLE_CONFIG=./ansible/ansible.cfg
+
+echo "Performing Ansible deploy ..."
+ansible-playbook -i ansible/inventories/hosts ansible/site.yml
+echo "Done."

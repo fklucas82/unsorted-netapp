@@ -1,0 +1,13 @@
+  - name: Create ONTAP/ONTAP vserver SnapMirror
+    na_ontap_snapmirror:
+      state: present
+      source_vserver: "{{ vserver }}"
+      destination_vserver: "{{ dr_vserver }}"
+      policy: MirrorAllSnapshots
+      identity_preserve: true
+      hostname: "{{ dest_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: true
+      validate_certs: false
+    delegate_to: localhost

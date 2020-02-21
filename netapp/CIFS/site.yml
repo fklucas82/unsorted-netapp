@@ -1,0 +1,89 @@
+---
+- hosts: all
+  gather_facts: false
+  vars:
+    login: &login
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: true
+      validate_certs: false
+    drlogin: &drlogin
+      hostname: "{{ dest_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: true
+      validate_certs: false
+  name: Onboard SVM
+  tasks:
+  - name: Create SVM
+    na_ontap_svm:
+      state: present
+      name: "{{ vserver }}"
+      root_volume: "{{ rootvol }}"
+      root_volume_aggregate: "{{ root_volume_aggregate }}"
+      root_volume_security_style: ntfs
+      allowed_protocols: cifs
+      <<: *login
+    delegate_to: localhost
+  - name: Create interface
+    na_ontap_interface:
+      state: present
+      interface_name: "{{ vserver }}_lif0"
+      home_port: "{{ home_port }}"      
+      home_node: "{{ home_node }}"
+      role: data
+      protocols: cifs
+      admin_status: up
+      failover_policy: local-only
+      firewall_policy: mgmt
+      is_auto_revert: true
+      address: "{{ address }}"
+      netmask: "{{ netmask }}"
+      vserver: "{{ vserver }}"
+      <<: *login
+    delegate_to: localhost
+  - name: create route
+    na_ontap_net_routes:
+      state: present
+      vserver: "{{ vserver }}"
+      destination: 0.0.0.0/0
+      gateway: "{{ gateway }}"
+      metric: 20
+      <<: *login
+    delegate_to: localhost
+  - name: create dns
+    na_ontap_dns:
+      state: present
+      domains: hy-vee.net
+      nameservers: "{{ nameservers }}"
+      vserver: "{{ vserver }}"
+      <<: *login
+    delegate_to: localhost
+  - name: Create cifs_server
+    na_ontap_cifs_server:
+      state: present
+      vserver: "{{ vserver }}"
+      domain: "hy-vee.net"
+      name: "{{ vserver }}"
+      <<: *login
+    delegate_to: localhost
+  - name: Move to Servers OU
+    win_domain_computer:
+      name: "{{ vserver }}"
+      sam_account_name: "{{ vserver }}$"
+      dns_hostname: "{{ vserver }}.hy-vee.net"
+      ou: "OU=Servers,OU=Corporate,OU=HyVee,DC=Hy-Vee,DC=net"
+      enabled: yes
+      state: present
+    delegate_to: my_windows_bridge.my_org.local
+#move to servers OU
+#create shares0 volume
+#create shares0$ share
+#create OU under fileshares
+#create AD groups
+#add fsadmin to FC group
+#set shares0 ntfs permissions
+
+
+
